@@ -1,14 +1,17 @@
-import '../constants/constant_widgets.dart';
-import '../constants/str_constants.dart';
-import '../model/appointment.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
+import '../model/database.dart';
+import '../constants/constant_widgets.dart';
+import '../constants/str_constants.dart';
+import '../model/appointment.dart';
 import '../constants/font_constants.dart';
 
 class NewAppointment extends StatefulWidget {
-  const NewAppointment({Key? key}) : super(key: key);
+  const NewAppointment({Key? key, this.appointment, this.isUpcomingAppointment}) : super(key: key);
+  final Appointment? appointment;
+  final bool? isUpcomingAppointment;
 
   @override
   State<NewAppointment> createState() => _NewAppointmentState();
@@ -19,10 +22,10 @@ class _NewAppointmentState extends State<NewAppointment> {
   int i = 0;
 
   //ValueNotifier<bool> dateTimeNotifier = ValueNotifier(false);
-  TextEditingController nameCtrl = TextEditingController(text: "");
-  TextEditingController emailCtrl = TextEditingController(text: "");
-  TextEditingController dateTimeCtrl = TextEditingController(text: "");
-  TextEditingController descCtrl = TextEditingController(text: "");
+  late final TextEditingController nameCtrl;
+  late final TextEditingController emailCtrl;
+  late final TextEditingController dateTimeCtrl;
+  late final TextEditingController descCtrl;
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   DateTime dateTime = DateTime.now();
@@ -35,7 +38,7 @@ class _NewAppointmentState extends State<NewAppointment> {
     DateTime? selected = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: selectedDate,
+      firstDate: DateTime.now(),
       lastDate: DateTime(2025),
     );
     if (selected != null && selected != selectedDate) {
@@ -98,13 +101,23 @@ class _NewAppointmentState extends State<NewAppointment> {
 
     appointmentBox.add(appointment);
 
-    for (int i = 0; i < appointmentBox.length; i++) {
-      var ap = appointmentBox.getAt(i)!;
-      debugPrint(ap.name);
-      debugPrint(ap.email);
-      debugPrint(DateFormat(StrConstants.dateFormat).format(ap.dateAndTime));
-      debugPrint(ap.description);
-    }
+    // for (int i = 0; i < appointmentBox.length; i++) {
+    //   var ap = appointmentBox.getAt(i)!;
+    //   debugPrint(ap.name);
+    //   debugPrint(ap.email);
+    //   debugPrint(DateFormat(StrConstants.dateFormat).format(ap.dateAndTime));
+    //   debugPrint(ap.description);
+    // }
+  }
+
+  void updateAppointment(){
+    Appointment appointment = Appointment(
+        name: nameCtrl.text,
+        email: emailCtrl.text,
+        dateAndTime: dateTime,
+        description: descCtrl.text);
+
+    AppointmentsDB.appointmentObj.updateAppointmentAtWithNewData(context: context, previousDateTime: widget.appointment!.dateAndTime, updatedAppointmentData: appointment, isUpcomingAppointment: widget.isUpcomingAppointment!);
   }
 
   @override
@@ -114,6 +127,16 @@ class _NewAppointmentState extends State<NewAppointment> {
 
     appointmentBox =
         Hive.box<Appointment>(StrConstants.appointments.toLowerCase());
+
+    // widget.appointment==null?debugPrint("null"):debugPrint("not a null value");
+    nameCtrl=TextEditingController(text: widget.appointment==null?"":widget.appointment!.name);
+    emailCtrl=TextEditingController(text: widget.appointment==null?"":widget.appointment!.email);
+    dateTimeCtrl=TextEditingController(text: widget.appointment==null?"":getDateFormat(widget.appointment!.dateAndTime));
+    descCtrl=TextEditingController(text: widget.appointment==null?"":widget.appointment!.description);
+
+    selectedDate=widget.appointment==null?selectedDate:widget.appointment!.dateAndTime;
+    selectedTime=widget.appointment==null?selectedTime:TimeOfDay.fromDateTime(widget.appointment!.dateAndTime);
+    dateTime=widget.appointment==null?dateTime:widget.appointment!.dateAndTime;
   }
 
   @override
@@ -226,7 +249,11 @@ class _NewAppointmentState extends State<NewAppointment> {
                                 }
                               }
 
-                              addAppointment();
+                              if(widget.appointment==null) {
+                                addAppointment();
+                              } else{
+                                updateAppointment();
+                              }
 
                               Navigator.of(context).pop();
                             }
@@ -236,7 +263,7 @@ class _NewAppointmentState extends State<NewAppointment> {
                             foregroundColor: Colors.white,
                           ),
                           child: Text(
-                            StrConstants.add,
+                            widget.appointment==null?StrConstants.add:StrConstants.update,
                             style: addAppointmentBtnStyle,
                           ),
                         ),

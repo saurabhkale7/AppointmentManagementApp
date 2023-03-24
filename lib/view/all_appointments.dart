@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'next_appointments.dart';
 import 'previous_appointments.dart';
 import 'upcoming_appointments.dart';
-import 'package:flutter/material.dart';
-
 import '../constants/constant_widgets.dart';
 import '../constants/font_constants.dart';
 import '../constants/str_constants.dart';
@@ -67,3 +67,22 @@ class AllAppointments extends StatelessWidget {
     );
   }
 }
+
+//ChangeNotifierProvider(
+//                     create: (context) => PreviousAppointmentsProvider(),
+//                     builder: (context, child){
+//                       return const PreviousAppointments();
+//                     },
+//                   ),
+//                   ChangeNotifierProvider(
+//                     create: (context) => UpcomingAppointmentsProvider(),
+//                     builder: (context, child){
+//                       return const UpcomingAppointments();
+//                     },
+//                   ),
+//                   ChangeNotifierProvider(
+//                     create: (context) => NextAppointmentsProvider(),
+//                     builder: (context, child){
+//                       return const NextAppointments();
+//                     },
+//                   ),

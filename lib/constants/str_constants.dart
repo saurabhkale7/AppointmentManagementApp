@@ -13,6 +13,7 @@ class StrConstants {
   static const String desc = "Description";
   static const String enterDesc = "Enter description";
   static const String add = "Add";
+  static const String update = "Update";
   static const String back = "Back";
   static const String noPreviousAppointments = "No previous appointments!";
   static const String noUpcomingAppointments = "No upcoming appointments!";
@@ -30,4 +31,7 @@ class StrConstants {
   static const String space = " ";
   static const String error = "Error";
   static const String ok = "Ok";
+  static const String confirmDelete = "Do you really want to delete this appointment?";
+  static const String no = "No";
+  static const String yes = "Yes";
 }

@@ -1,10 +1,14 @@
-import 'constants/nav_constants.dart';
-import 'model/appointment.dart';
-import 'navigation/customroute.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'state_management/next_appointments_provider.dart';
+import 'state_management/previous_appointments_provider.dart';
+import 'state_management/upcoming_appointments_provider.dart';
+import 'constants/nav_constants.dart';
+import 'model/appointment.dart';
+import 'navigation/customroute.dart';
 import 'constants/str_constants.dart';
 
 void main() async {
@@ -27,11 +31,21 @@ class MyApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: StrConstants.appointments,
-      debugShowCheckedModeBanner: false,
-      initialRoute: NavConstants.homePage,
-      onGenerateRoute: CustomRoute.generateRoute,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (context) => PreviousAppointmentsProvider()),
+        ChangeNotifierProvider(
+            create: (context) => UpcomingAppointmentsProvider()),
+        ChangeNotifierProvider(
+            create: (context) => NextAppointmentsProvider()),
+      ],
+      child: const MaterialApp(
+        title: StrConstants.appointments,
+        debugShowCheckedModeBanner: false,
+        initialRoute: NavConstants.homePage,
+        onGenerateRoute: CustomRoute.generateRoute,
+      ),
     );
   }
 }

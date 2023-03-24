@@ -3,6 +3,7 @@ import '../constants/font_constants.dart';
 import '../constants/nav_constants.dart';
 import '../constants/str_constants.dart';
 import '../model/appointment.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -141,7 +142,10 @@ class _HomePageState extends State<HomePage>{
                             child: DecoratedBox(
                               decoration: commonBoxDecoration,
                               child: ListTile(
-                                title: Text(appointment.name, style: listTileTitleStyle,),
+                                title: Padding(
+                                  padding: listTileTitlePadding,
+                                  child: Text(appointment.name, style: listTileTitleStyle,),
+                                ),
                                 subtitle: Padding(
                                   padding: listTileSubtitlePadding,
                                   child: Text(getDateFormat(appointment.dateAndTime)),
